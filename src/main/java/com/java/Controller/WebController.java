@@ -3,6 +3,7 @@ package com.java.Controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.java.utils.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class WebController {
         log.info("Welcome to ravikumar medi java spring boot project");
 
         Map<String, Object> response = new HashMap<>();
-        response.put("statusCode", 200);
-        response.put("status", "SUCCESS");
+        response.put("statusCode", Constants.StatusCode.success);
+        response.put("status", Constants.Messages.success);
         response.put("message", "Welcome to ravikumar medi java spring boot project");
         
         return ResponseEntity.ok(response); 
