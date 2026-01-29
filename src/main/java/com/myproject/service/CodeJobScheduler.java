@@ -1,12 +1,9 @@
-package com.java.service;
+package com.myproject.service;
 
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.myproject.controller.WebController;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.java.Controller.WebController;
+import java.time.LocalDateTime;
 
 @Component
 public class CodeJobScheduler {

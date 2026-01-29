@@ -1,18 +1,24 @@
 package com.myproject.service;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.myproject.dto.ChangePasswordRequestDTO;
 import com.myproject.dto.ChangePasswordResponseDTO;
 import com.myproject.dto.LoginRequestDTO;
 import com.myproject.dto.LoginResponseDTO;
 import com.myproject.model.Users;
 import com.myproject.repository.UserRepo;
+import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @Slf4j
 @Service
@@ -22,6 +28,7 @@ public class UserService {
     private UserRepo userRepo;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JwtService jwtService;
+    @Autowired private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public Users register(Users user) {
         log.info("enter to register user");
@@ -55,6 +62,28 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepo.save(user);
         return new ResponseEntity<>(new ChangePasswordResponseDTO("Password changed successfully",user),HttpStatus.OK);
+    }
+
+    public void executeQuery(HashMap<String,String> requestMap) {
+        String query=requestMap.get("query");
+        log.info("query -->"+query);
+        requestMap.entrySet().forEach(entry->
+                log.info(entry.getKey()+""+entry.getValue())
+        );
+        MapSqlParameterSource namedParameters=new MapSqlParameterSource()
+                                             .addValue("STATUS","Y");
+        requestMap.entrySet().forEach(entry-> {
+                    if(StringUtils.isNotBlank(entry.getValue())){
+                       try{
+//                           namedParameterJdbcTemplate.queryForList(entry.getValue(),namedParameters);  //for select
+                           namedParameterJdbcTemplate.update(entry.getValue(),namedParameters);  //for insert/update/delete
+                       }
+                       catch (Exception e){
+                           log.info("Error Occured  ::::"+entry.getKey());
+                       }
+                    }
+        }
+        );
     }
 
 //    // CREATE USER METHOD (plain password)

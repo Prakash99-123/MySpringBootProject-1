@@ -35,7 +35,7 @@ public class SecurityConfig {
         log.info("\n enter to securityFilterChain");
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/web-api/**","/api/auth/**", "/","/welcome")
+                        .requestMatchers("/web-api/**","/api/auth/**", "/","/welcome","/users/**")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
